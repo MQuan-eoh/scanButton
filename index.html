@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+
+        <div class="status" id="status-0" onclick="toggleButton(0)">Off</div>
+        <button
+          class="control-button"
+          id="control-button-0"
+          onclick="toggleButton(0)"
+        >
+          Turn OFF
+        </button>
+        <button onclick="toggleButton(0)" id="button-0" style="display: none">
+          OFF
+        </button>
+
+    </div>
+
+    <!-- Confirm Popup -->
+    <div class="confirm-overlay" id="confirmOverlay">
+      <div class="confirm-popup">
+        <div class="confirm-title">Xác nhận thao tác</div>
+        <div class="confirm-message">
+          Bạn có chắc chắn muốn
+          <span class="confirm-action" id="confirmAction">bật</span>
+          <span class="confirm-device" id="confirmDevice">CB Tổng</span> không?
+        </div>
+        <div class="confirm-buttons">
+          <button class="confirm-btn cancel" onclick="cancelConfirm()">
+            Hủy
+          </button>
+          <button
+            class="confirm-btn confirm"
+            id="confirmButton"
+            onclick="executeAction()"
+          >
+            Xác nhận
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="@eohjsc/era-widget/src/index.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

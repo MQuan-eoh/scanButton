@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "era",
+    "e-ra",
+    "widget"
+  ],
+  "author": "EOH JSC",
+  "license": "MIT",
+  "dependencies": {
+    "minify": "^11.2.0"
+  }
+}
