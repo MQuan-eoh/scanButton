@@ -190,17 +190,17 @@ function updateButtonUI(buttonIndex, isOn) {
   const hiddenButtonElement = document.getElementById(`button-${buttonIndex}`);
 
   if (isOn) {
-    // ON state
+    // SCAN state (was ON)
     statusElement.classList.add("active");
-    statusElement.textContent = "On";
-    controlButtonElement.textContent = "Turn ON";
+    statusElement.textContent = "SCAN";
+    controlButtonElement.textContent = "SCAN";
     controlButtonElement.classList.add("active");
-    hiddenButtonElement.textContent = "ON";
+    hiddenButtonElement.textContent = "SCAN";
   } else {
     // OFF state
     statusElement.classList.remove("active");
-    statusElement.textContent = "Off";
-    controlButtonElement.textContent = "Turn OFF";
+    statusElement.textContent = "OFF";
+    controlButtonElement.textContent = "OFF";
     controlButtonElement.classList.remove("active");
     hiddenButtonElement.textContent = "OFF";
   }
@@ -234,15 +234,12 @@ function showConfirmPopup(buttonIndex, isOn) {
 
   // Update popup content
   const confirmAction = document.getElementById("confirmAction");
-  const confirmDevice = document.getElementById("confirmDevice");
+
   const confirmButton = document.getElementById("confirmButton");
 
   // Set action text and styling
-  confirmAction.textContent = isOn ? "bật" : "tắt";
+  confirmAction.textContent = isOn ? "SCAN" : "OFF";
   confirmAction.className = isOn ? "confirm-action" : "confirm-action off";
-
-  // Set device name
-  confirmDevice.textContent = deviceNames[buttonIndex];
 
   // Set confirm button styling
   confirmButton.className = isOn
