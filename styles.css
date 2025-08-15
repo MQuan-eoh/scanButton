@@ -71,6 +71,7 @@ body {
 
 .status {
   width: 100%;
+  max-width: 400px;
   height: 52px;
   border-radius: 14px;
   margin: 0 auto 18px;
