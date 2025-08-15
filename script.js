@@ -1,15 +1,10 @@
 const eraWidget = new EraWidget();
 let actions = null; // Store actions array directly
 let isConfigured = false;
-let initialDataLoaded = false;
-
-// Button states - track locally (only 1 button now)
-let buttonStates = [false];
 
 // Pending action for confirm popup
 let pendingAction = {
   buttonIndex: null,
-  isOn: null,
 };
 
 // Device names for confirm popup (only 1 device now)
@@ -92,11 +87,11 @@ function updateUIWithSettings() {
 }
 
 eraWidget.init({
-  needRealtimeConfigs: true /* Cần giá trị hiện thời */,
+  needRealtimeConfigs: false /* Không cần giá trị hiện thời */,
   needHistoryConfigs: false /* Không cần giá trị lịch sử */,
-  maxActionsCount: 2 /* Số lượng tối đa các hành động có thể kích hoạt */,
+  maxActionsCount: 1 /* Số lượng tối đa các hành động có thể kích hoạt */,
   minHistoryConfigsCount: 0 /* Số lượng tối thiểu giá trị lịch sử */,
-  minActionsCount: 2 /* Số lượng tối thiểu hành động */,
+  minActionsCount: 1 /* Số lượng tối thiểu hành động */,
   mobileHeight: 200 /* Chiều cao của widget */,
   onConfiguration: (configuration) => {
     console.log("E-Ra Configuration received:", configuration);
@@ -114,136 +109,43 @@ eraWidget.init({
     // Request initial data sync after configuration
     console.log("Requesting initial data sync...");
   },
-
-  onValues: (values) => {
-    console.log("E-Ra values received:", values);
-
-    // Update button states based on received values
-    if (values && typeof values === "object") {
-      // Get the first value from the values object
-      const valueKeys = Object.keys(values);
-      if (valueKeys.length > 0) {
-        const firstKey = valueKeys[0];
-        const serverValue = values[firstKey].value;
-        // Check if value is 10, 11, or 30 for ON state, else OFF
-        const isOn =
-          serverValue === 10 || serverValue === 11 || serverValue === 30;
-        console.log(
-          `Device: Key=${firstKey}, Server value=${serverValue}, isOn=${isOn}`
-        );
-
-        // Update button state if different from local state
-        if (buttonStates[0] !== isOn) {
-          buttonStates[0] = isOn;
-          updateButtonUI(0, isOn);
-
-          // Mark initial data as loaded on first data reception
-          if (!initialDataLoaded) {
-            initialDataLoaded = true;
-            console.log("Initial data synchronization completed via onValues");
-          }
-        }
-      }
-    }
-  },
-
-  // Add onDataSync callback to handle periodic data updates
-  onDataSync: (values) => {
-    console.log("E-Ra data sync received:", values);
-
-    // Process the same way as onValues
-    if (values && typeof values === "object") {
-      // Get the first value from the values object
-      const valueKeys = Object.keys(values);
-      if (valueKeys.length > 0) {
-        const firstKey = valueKeys[0];
-        const serverValue = values[firstKey].value;
-        // Check if value is 10, 11, or 30 for ON state, else OFF
-        const isOn =
-          serverValue === 10 || serverValue === 11 || serverValue === 30;
-        console.log(
-          `Data sync - Device: Key=${firstKey}, Server value=${serverValue}, isOn=${isOn}`
-        );
-
-        // Always update if different from local state
-        if (buttonStates[0] !== isOn) {
-          console.log(
-            `Updating device state from ${buttonStates[0]} to ${isOn}`
-          );
-          buttonStates[0] = isOn;
-          updateButtonUI(0, isOn);
-        }
-      }
-    }
-  },
 });
 
-function updateButtonUI(buttonIndex, isOn) {
-  console.log(`updateButtonUI: buttonIndex=${buttonIndex}, isOn=${isOn}`);
+function updateButtonUI(buttonIndex) {
+  console.log(`updateButtonUI: buttonIndex=${buttonIndex}`);
 
-  // Update all UI elements
+  // Update all UI elements to always show SCAN
   const statusElement = document.getElementById(`status-${buttonIndex}`);
   const controlButtonElement = document.getElementById(
     `control-button-${buttonIndex}`
   );
   const hiddenButtonElement = document.getElementById(`button-${buttonIndex}`);
 
-  if (isOn) {
-    // SCAN state (was ON)
-    statusElement.classList.add("active");
-    statusElement.textContent = "SCAN";
-    controlButtonElement.textContent = "SCAN";
-    controlButtonElement.classList.add("active");
-    hiddenButtonElement.textContent = "SCAN";
-  } else {
-    // OFF state
-    statusElement.classList.remove("active");
-    statusElement.textContent = "OFF";
-    controlButtonElement.textContent = "OFF";
-    controlButtonElement.classList.remove("active");
-    hiddenButtonElement.textContent = "OFF";
-  }
-
-  // Update global status variables for backward compatibility
-  window[`status${buttonIndex}`] = isOn;
-}
-
-function updateButtonState(buttonIndex, isOn) {
-  console.log(`updateButtonState: buttonIndex=${buttonIndex}, isOn=${isOn}`);
-
-  // Update local state
-  buttonStates[buttonIndex] = isOn;
-
-  // Update UI
-  updateButtonUI(buttonIndex, isOn);
+  // Always show SCAN text
+  statusElement.textContent = "SCAN";
+  controlButtonElement.textContent = "SCAN";
+  hiddenButtonElement.textContent = "SCAN";
 }
 
 function toggleButton(buttonIndex) {
-  const currentState = buttonStates[buttonIndex];
-  const newState = !currentState;
-
-  // Show confirm popup instead of direct action
-  showConfirmPopup(buttonIndex, newState);
+  // Simply trigger scan action
+  showConfirmPopup(buttonIndex);
 }
 
-function showConfirmPopup(buttonIndex, isOn) {
+function showConfirmPopup(buttonIndex) {
   // Store pending action
   pendingAction.buttonIndex = buttonIndex;
-  pendingAction.isOn = isOn;
 
   // Update popup content
   const confirmAction = document.getElementById("confirmAction");
-
   const confirmButton = document.getElementById("confirmButton");
 
-  // Set action text and styling
-  confirmAction.textContent = isOn ? "SCAN" : "OFF";
-  confirmAction.className = isOn ? "confirm-action" : "confirm-action off";
+  // Set action text and styling for SCAN
+  confirmAction.textContent = "SCAN";
+  confirmAction.className = "confirm-action";
 
   // Set confirm button styling
-  confirmButton.className = isOn
-    ? "confirm-btn confirm"
-    : "confirm-btn confirm off";
+  confirmButton.className = "confirm-btn confirm";
   confirmButton.textContent = "Xác nhận";
 
   // Show popup
@@ -264,21 +166,20 @@ function cancelConfirm() {
 
   // Clear pending action
   pendingAction.buttonIndex = null;
-  pendingAction.isOn = null;
 }
 
 function executeAction() {
   // Execute the pending action
-  if (pendingAction.buttonIndex !== null && pendingAction.isOn !== null) {
-    controlButton(pendingAction.buttonIndex, pendingAction.isOn);
+  if (pendingAction.buttonIndex !== null) {
+    controlButton(pendingAction.buttonIndex);
   }
 
   // Hide popup
   cancelConfirm();
 }
 
-function controlButton(buttonIndex, isOn) {
-  console.log(`controlButton called: buttonIndex=${buttonIndex}, isOn=${isOn}`);
+function controlButton(buttonIndex) {
+  console.log(`controlButton called: buttonIndex=${buttonIndex}`);
 
   if (!isConfigured) {
     console.warn("Configuration pending - widget not ready");
@@ -288,31 +189,22 @@ function controlButton(buttonIndex, isOn) {
   }
 
   // Check if actions array is available
-  if (!actions || actions.length < 2) {
+  if (!actions || actions.length < 1) {
     console.warn("Actions not configured properly");
-    // Still update UI locally even if no server action
-    updateButtonState(buttonIndex, isOn);
     return;
   }
 
-  // Get action based on ON/OFF state: ON = actions[0], OFF = actions[1] (following the pattern)
-  const actionToTrigger = isOn ? actions[0] : actions[1];
+  // Always use action at position [0] for SCAN
+  const actionToTrigger = actions[0];
   console.log(`Action to trigger:`, actionToTrigger);
 
   if (actionToTrigger) {
-    console.log("Triggering E-Ra action:", actionToTrigger);
+    console.log("Triggering E-Ra SCAN action:", actionToTrigger);
 
-    // Use E-Ra standard format with optional chaining (following the pattern)
+    // Use E-Ra standard format with optional chaining
     eraWidget.triggerAction(actionToTrigger?.action, null);
-
-    // Update UI immediately for better UX
-    updateButtonState(buttonIndex, isOn);
-
-    // Request data sync after action to confirm state change
   } else {
-    console.warn(`No action config found for ${isOn ? "ON" : "OFF"} state`);
-    // Still update UI locally even if no server action
-    updateButtonState(buttonIndex, isOn);
+    console.warn(`No action config found at position [0]`);
   }
 }
 
@@ -364,22 +256,17 @@ document.addEventListener("DOMContentLoaded", function () {
   // Show as no-connection until configured and data received
   document.getElementById(`container-0`).classList.add("no-connection");
 
-  // Set initial UI state (will be updated when onValues receives data)
-  updateButtonUI(0, false);
+  // Set initial UI state to show SCAN
+  updateButtonUI(0);
 
-  console.log(
-    "DOM loaded - waiting for E-Ra configuration and data via onValues..."
-  );
+  console.log("DOM loaded - waiting for E-Ra configuration...");
 
-  // Add timeout fallback if no data received after configuration
+  // Add timeout fallback if no configuration received
   setTimeout(() => {
-    if (isConfigured && !initialDataLoaded) {
-      console.warn(
-        "No data received via onValues - keeping default OFF states"
-      );
-      initialDataLoaded = true;
+    if (isConfigured) {
+      console.log("Widget configured and ready");
       // Remove no-connection indicator
       document.getElementById(`container-0`).classList.remove("no-connection");
     }
-  }, 10000); // 10 second timeout for data reception
+  }, 10000); // 10 second timeout for configuration
 });
