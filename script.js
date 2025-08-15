@@ -1,6 +1,5 @@
 const eraWidget = new EraWidget();
 let actions = null; // Store actions array directly
-let configDevice = null; // Store realtime config directly
 let isConfigured = false;
 let initialDataLoaded = false;
 
@@ -106,10 +105,6 @@ eraWidget.init({
     actions = configuration.actions;
     console.log("Actions stored:", actions);
 
-    // Store realtime config directly (following the pattern)
-    configDevice = configuration.realtime_configs[0];
-    console.log("Device config stored:", configDevice);
-
     isConfigured = true;
     console.log("Widget configured successfully");
 
@@ -124,15 +119,17 @@ eraWidget.init({
     console.log("E-Ra values received:", values);
 
     // Update button states based on received values
-    if (values && typeof values === "object" && configDevice) {
-      // Get device value using the stored config
-      if (values[configDevice.id]) {
-        const serverValue = values[configDevice.id].value;
+    if (values && typeof values === "object") {
+      // Get the first value from the values object
+      const valueKeys = Object.keys(values);
+      if (valueKeys.length > 0) {
+        const firstKey = valueKeys[0];
+        const serverValue = values[firstKey].value;
         // Check if value is 10, 11, or 30 for ON state, else OFF
         const isOn =
           serverValue === 10 || serverValue === 11 || serverValue === 30;
         console.log(
-          `Device: Config ID=${configDevice.id}, Server value=${serverValue}, isOn=${isOn}`
+          `Device: Key=${firstKey}, Server value=${serverValue}, isOn=${isOn}`
         );
 
         // Update button state if different from local state
@@ -155,15 +152,17 @@ eraWidget.init({
     console.log("E-Ra data sync received:", values);
 
     // Process the same way as onValues
-    if (values && typeof values === "object" && configDevice) {
-      // Get device value using the stored config
-      if (values[configDevice.id]) {
-        const serverValue = values[configDevice.id].value;
+    if (values && typeof values === "object") {
+      // Get the first value from the values object
+      const valueKeys = Object.keys(values);
+      if (valueKeys.length > 0) {
+        const firstKey = valueKeys[0];
+        const serverValue = values[firstKey].value;
         // Check if value is 10, 11, or 30 for ON state, else OFF
         const isOn =
           serverValue === 10 || serverValue === 11 || serverValue === 30;
         console.log(
-          `Data sync - Device: Config ID=${configDevice.id}, Server value=${serverValue}, isOn=${isOn}`
+          `Data sync - Device: Key=${firstKey}, Server value=${serverValue}, isOn=${isOn}`
         );
 
         // Always update if different from local state
