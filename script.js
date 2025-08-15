@@ -87,11 +87,6 @@ function updateUIWithSettings() {
 }
 
 eraWidget.init({
-  needRealtimeConfigs: false /* Không cần giá trị hiện thời */,
-  needHistoryConfigs: false /* Không cần giá trị lịch sử */,
-  maxActionsCount: 1 /* Số lượng tối đa các hành động có thể kích hoạt */,
-  minHistoryConfigsCount: 0 /* Số lượng tối thiểu giá trị lịch sử */,
-  minActionsCount: 1 /* Số lượng tối thiểu hành động */,
   mobileHeight: 200 /* Chiều cao của widget */,
   onConfiguration: (configuration) => {
     console.log("E-Ra Configuration received:", configuration);
