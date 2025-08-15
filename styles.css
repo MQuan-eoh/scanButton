@@ -296,7 +296,8 @@ button {
 
   .status {
     height: 48px;
-    font-size: 15px;
+    font-size: 19px;
+    font-weight: 600;
     border-radius: 12px;
   }
 
@@ -352,7 +353,7 @@ button {
   .status {
     max-width: 250px;
     height: 44px;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 600;
     margin-bottom: 10px;
     border-radius: 10px;
