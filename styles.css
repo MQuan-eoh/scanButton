@@ -295,7 +295,6 @@ button {
   }
 
   .status {
-    max-width: 280px;
     height: 48px;
     font-size: 15px;
     border-radius: 12px;
@@ -412,10 +411,6 @@ button {
     height: 100dvh;
     max-width: 600px;
     margin: 0 auto;
-  }
-
-  .status {
-    max-width: 200px;
   }
 
   .control-button {
