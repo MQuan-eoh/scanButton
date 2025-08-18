@@ -71,7 +71,6 @@ body {
 
 .status {
   width: 100%;
-  max-width: 400px;
   height: 52px;
   border-radius: 14px;
   margin: 0 auto 18px;
@@ -296,7 +295,7 @@ button {
   }
 
   .status {
-    max-width: 280px;
+    max-width: 300px;
     height: 48px;
     font-size: 16px;
     font-weight: 600;
@@ -353,7 +352,7 @@ button {
   }
 
   .status {
-    max-width: 240px;
+    max-width: 350px;
     height: 44px;
     font-size: 15px;
     font-weight: 600;
@@ -417,7 +416,7 @@ button {
   }
 
   .status {
-    max-width: 220px;
+    max-width: 300px;
   }
 
   .control-button {
@@ -437,7 +436,7 @@ button {
   }
 
   .status {
-    max-width: 200px;
+    max-width: 300px;
     height: 40px;
     font-size: 14px;
     font-weight: 600;
